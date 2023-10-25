@@ -2,7 +2,7 @@ import React,{useContext} from 'react'
 import { Card,Button} from 'react-bootstrap';
 import CartContext from '../../context/CartContext';
 import {useNavigate } from "react-router-dom";
-import axios from 'axios';
+
 
 
 export default function ProductItem(props) {
@@ -13,20 +13,11 @@ const navigate = useNavigate();
 
   const addCartToHandeler = async() =>{
  
-    
-    
-    try{
-
-      
-      const response = await axios.post('https://ecoumers-default-rtdb.firebaseio.com/cart.json',{...props,Quantity : 1})
-       console.log('productitem',response);
-     
-      ctx.addItem({...props,Quantity : 1,_id:response.data.name});
-      
-  }
-     catch(e){
-       
-    }
+    const email = localStorage.getItem('endpoint');
+    console.log(email);
+  
+  
+   ctx.addItem({...props,Quantity : 1});
     
    
   };

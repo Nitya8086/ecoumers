@@ -1,100 +1,76 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
-import { Navbar,Container } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
-const Header = () => {
-  const location = useLocation();
+import React from 'react';
+import Cart from '../Cart/Cart';
 
-  console.log("loc", location.pathname);
-  // console.log("loc", location.pathname);
+import CartContext from '../../context/CartContext';
 
-  const [hideButton, setHideButton] = useState(false);
+import {Navbar,Container,Badge,Nav,Dropdown, Button} from 'react-bootstrap';
+import {FaShoppingCart} from 'react-icons/fa';
+import { Link, useNavigate} from 'react-router-dom';
+import { useContext } from 'react';
 
-  useEffect(() => {
-    if (location.pathname === "/") {
-      setHideButton(true);
-    } else {
-      setHideButton(false);
-    }
-  }, [location.pathname]);
+
+const  Header = ()  => {
+  const ctx =  useContext(CartContext);
+  // const [isLogin,setIsLogin] = useState(true)
+
+  const navigate = useNavigate()
+  const logoutHandelere = () =>{
+
+    ctx.logOut();
+   
+   
+
+    navigate('/');
+  }
+  const auth = localStorage.getItem('token');
+  const displayName = localStorage.getItem('displayName');
+ const numberOfCartItem = ctx.items.reduce((currNo,item) => {
+  return(
+    currNo+item.Quantity
+  );
+ },0);
   return (
-    <div>
-      {/* ----------Second Navbar ---------------- */}
-      <Navbar
-        bg="secondary"
-        variant="dark"
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr",
-          placeItems: "center",
-          width: "100vw",
-          marginTop: "55px",
-        }}
-      >
-        <Container
-          style={{
-            width: "100%",
-          }}
-        >
-          <Navbar.Collapse className="justify-content-center">
-            <Navbar
-              style={{
-                color: "white",
-                // top: "-35px",
-                // right: "30rem",
-                // padding: "20px",
-                fontSize: "100px",
-                fontWeight: "bold",
-                fontFamily: "Times New Roman, Times, serif",
-              }}
-            >
-              The Generics
-            </Navbar>
-          </Navbar.Collapse>
-        </Container>
+    <>
+       <Navbar bg="dark" variant = "dark" style = {{height :80,display : 'flex' , justifyContent : 'center'}}>
         <Container>
-          <Navbar.Collapse className="justify-content-center">
-            {hideButton && (
-              <button
-                style={{
-                  // display: "block",
-                  border: "1px solid #56CCF2",
-                  padding: "15px 30px",
-                  fontSize: "23px",
-                  fontWeight: "200",
-                  background: "inherit",
-                  cursor: "pointer",
-                  color: "white",
-                }}
-              >
-                Get Our Latest Album
-              </button>
-            )}
-          </Navbar.Collapse>
-        </Container>
-        <Container>
-          <Navbar.Collapse>
-            {hideButton && (
-              <button
-                style={{
-                  cursor: "pointer",
-                  border: "2px solid #56CCF2",
-                  borderRadius: "50%",
-                  padding: "20px",
-                  fontSize: "30px",
-                  fontWeight: "200",
-                  background: "inherit",
-                  color: "#56CCF2",
-                  margin: "20px auto",
-                }}
-              >
-                ►
-              </button>
-            )}
-          </Navbar.Collapse>
+          <Navbar.Brand className = "m-auto">
+            <Link to='/'>Home</Link>
+            </Navbar.Brand>
+            <Navbar.Brand className = "m-auto">
+            <Link to='/about'>About</Link>
+            </Navbar.Brand>
+       { !auth && (<Navbar.Brand className = "m-auto">
+            <Link to='/signup'>Signup</Link>
+            </Navbar.Brand>)}
+         { !auth && (<Navbar.Brand className = "m-auto">
+            <Link to='/login'>Login</Link>
+            </Navbar.Brand>)}
+
+            <div>
+       {auth && <Button variant = 'success' onClick={logoutHandelere} className="logout">Logout</Button>}
+      </div>
+           
+            <Navbar.Brand className = "m-auto">
+            <Link to='/contactUs'>ContactUs</Link>
+            </Navbar.Brand>
+            <Navbar.Brand className = "m-auto">
+            <Link to='/store'>Store</Link>
+            </Navbar.Brand>
+           <div>{displayName}</div>
+          <Nav>
+          <Dropdown>
+            <Dropdown.Toggle variant="success">
+              <FaShoppingCart color="white" fontSize="25px" />
+              <Badge>{numberOfCartItem }</Badge>
+            </Dropdown.Toggle>
+            <Dropdown.Menu style={{ minWidth: 370 }}>
+              <Cart/>
+            </Dropdown.Menu>
+            </Dropdown>
+            </Nav>
         </Container>
       </Navbar>
-    </div>
-  );
-};
+      </>
+      );
+}
 export default Header;
